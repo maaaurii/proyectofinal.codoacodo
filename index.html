@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Jugadores</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
     <div class="container mt-5">
         <h1>Gestión de Jugadores</h1>
-
-        <!-- Formulario para agregar un nuevo jugador -->
+        <!-- Formulario para agregar jugadores -->
         <div class="mb-4">
             <h2>Agregar Nuevo Jugador</h2>
             <form id="addJugadorForm">
@@ -26,13 +26,26 @@
                 </div>
                 <div class="form-group">
                     <label for="posicion">Posición:</label>
-                    <input type="text" class="form-control" id="posicion" name="posicion" required>
+                    <select class="form-control" id="posicion" name="posicion" required>
+                        <option value="">Seleccione una posición</option>
+                        <option value="Arquero">ARQ</option>
+                        <option value="Defensor Central Derecho">DEFD</option>
+                        <option value="Defensor Central Izquierdo">DEFI</option>
+                        <option value="Lateral Izquierdo">LATI</option>
+                        <option value="Lateral Derecho">LATD</option>
+                        <option value="Mediocampista Central">MCD</option>
+                        <option value="Mediocampista derecho">MD</option>
+                        <option value="Mediocampista Izquierdo">MCI</option>
+                        <option value="Delantero">DEL</option>
+                        <option value="Extremo Izquierdo">EXTI</option>
+                        <option value="Extremo Derecho">EXTD</option>
+                    </select>
                 </div>
                 <button type="submit" class="btn btn-primary">Agregar Jugador</button>
             </form>
         </div>
 
-        <!-- Formulario para editar un jugador (inicialmente oculto) -->
+        <!-- Formulario para editar jugadores -->
         <div id="editForm" class="mb-4" style="display: none;">
             <h2>Editar Jugador</h2>
             <form id="editJugadorForm">
@@ -47,14 +60,27 @@
                 </div>
                 <div class="form-group">
                     <label for="editPosicion">Posición:</label>
-                    <input type="text" class="form-control" id="editPosicion" name="posicion" required>
+                    <select class="form-control" id="editPosicion" name="posicion" required>
+                        <option value="">Seleccione una posición</option>
+                        <option value="Arquero">ARQ</option>
+                        <option value="Defensor Central Derecho">DEFD</option>
+                        <option value="Defensor Central Izquierdo">DEFI</option>
+                        <option value="Lateral Izquierdo">LATI</option>
+                        <option value="Lateral Derecho">LATD</option>
+                        <option value="Mediocampista Central">MCD</option>
+                        <option value="Mediocampista derecho">MD</option>
+                        <option value="Mediocampista Izquierdo">MCI</option>
+                        <option value="Delantero">DEL</option>
+                        <option value="Extremo Izquierdo">EXTI</option>
+                        <option value="Extremo Derecho">EXTD</option>
+                    </select>
                 </div>
                 <button type="submit" class="btn btn-success">Guardar Cambios</button>
                 <button type="button" class="btn btn-secondary" id="cancelEdit">Cancelar</button>
             </form>
         </div>
 
-        <!-- Tabla para mostrar los jugadores existentes -->
+        <!-- Lista de jugadores -->
         <div>
             <h2>Lista de Jugadores</h2>
             <table class="table">
@@ -68,139 +94,31 @@
                     </tr>
                 </thead>
                 <tbody id="jugadoresTable">
-                    <!-- Los jugadores se agregarán aquí mediante JavaScript -->
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- JavaScript para manejar el formulario y las solicitudes AJAX -->
-    <script>
-        $(document).ready(function () {
-            // Función para obtener todos los jugadores
-            function getJugadores() {
-                $.ajax({
-                    url: 'http://localhost:5000/jugadores',
-                    method: 'GET',
-                    success: function (data) {
-                        let tableContent = '';
-                        data.forEach(jugador => {
-                            tableContent += `
-                                <tr>
-                                    <td>${jugador.id}</td>
-                                    <td>${jugador.nombre}</td>
-                                    <td>${jugador.dorsal}</td>
-                                    <td>${jugador.posicion}</td>
-                                    <td>
-                                        <button class="btn btn-warning btn-sm" onclick="editJugador(${jugador.id})">Editar</button>
-                                        <button class="btn btn-danger btn-sm" onclick="deleteJugador(${jugador.id})">Eliminar</button>
-                                    </td>
-                                </tr>
-                            `;
-                        });
-                        $('#jugadoresTable').html(tableContent);
-                    }
-                });
-            }
+    <!-- Campo de fútbol -->
+    <div class="field">
+        <div class="inner">
+            <div class="middle-line"></div>
+            <div class="middle-circle"></div>
+            <div class="bow is-left"></div>
+            <div class="bow is-right"></div>
+            <div class="penalty-area is-right"></div>
+            <div class="penalty-area is-left"></div>
+            <div class="goal is-right">
+                <div class="penalty"></div>
+            </div>
+            <div class="goal is-left">
+                <div class="penalty"></div>
+            </div>
+            <!-- Círculo de Argentina -->
+            
+        </div>
+    </div>
 
-            // Llamar a getJugadores cuando la página se cargue
-            getJugadores();
-
-            // Manejar el formulario para agregar un nuevo jugador
-            $('#addJugadorForm').on('submit', function (e) {
-                e.preventDefault();
-
-                const nombre = $('#nombre').val();
-                const dorsal = $('#dorsal').val();
-                const posicion = $('#posicion').val();
-
-                $.ajax({
-                    url: 'http://localhost:5000/jugadores',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ nombre, dorsal, posicion }),
-                    success: function (data) {
-                        $('#nombre').val('');
-                        $('#dorsal').val('');
-                        $('#posicion').val('');
-                        getJugadores();  // Actualizar la lista de jugadores
-                    },
-                    error: function () {
-                        alert('Error al agregar el jugador');
-                    }
-                });
-            });
-
-            // Manejar el formulario para editar un jugador
-            $('#editJugadorForm').on('submit', function (e) {
-                e.preventDefault();
-
-                const id = $('#editId').val();
-                const nombre = $('#editNombre').val();
-                const dorsal = $('#editDorsal').val();
-                const posicion = $('#editPosicion').val();
-
-                $.ajax({
-                    url: `http://localhost:5000/jugadores/${id}`,
-                    method: 'PUT',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ nombre, dorsal, posicion }),
-                    success: function (data) {
-                        $('#editForm').hide();
-                        $('#editId').val('');
-                        $('#editNombre').val('');
-                        $('#editDorsal').val('');
-                        $('#editPosicion').val('');
-                        getJugadores();  // Actualizar la lista de jugadores
-                    },
-                    error: function () {
-                        alert('Error al editar el jugador');
-                    }
-                });
-            });
-
-            // Función para mostrar el formulario de edición con datos del jugador
-            window.editJugador = function(id) {
-                $.ajax({
-                    url: `http://localhost:5000/jugadores/${id}`,
-                    method: 'GET',
-                    success: function (data) {
-                        $('#editId').val(data.id);
-                        $('#editNombre').val(data.nombre);
-                        $('#editDorsal').val(data.dorsal);
-                        $('#editPosicion').val(data.posicion);
-                        $('#editForm').show();
-                    },
-                    error: function () {
-                        alert('Error al obtener los datos del jugador');
-                    }
-                });
-            }
-
-            // Función para cancelar la edición y ocultar el formulario de edición
-            $('#cancelEdit').on('click', function () {
-                $('#editForm').hide();
-                $('#editId').val('');
-                $('#editNombre').val('');
-                $('#editDorsal').val('');
-                $('#editPosicion').val('');
-            });
-
-            // Función para eliminar un jugador
-            window.deleteJugador = function(id) {
-                $.ajax({
-                    url: `http://localhost:5000/jugadores/${id}`,
-                    method: 'DELETE',
-                    success: function () {
-                        getJugadores();  // Actualizar la lista de jugadores
-                    },
-                    error: function () {
-                        alert('Error al eliminar el jugador');
-                    }
-                });
-            }
-        });
-    </script>
+    <script src="/java.js"></script>
 </body>
 </html>
-
